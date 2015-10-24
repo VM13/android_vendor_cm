@@ -105,11 +105,6 @@ endif
 PRODUCT_COPY_FILES += \
     vendor/cm/prebuilt/common/etc/init.local.rc:root/init.cm.rc
 
-# Bring in camera effects
-PRODUCT_COPY_FILES +=  \
-    vendor/cm/prebuilt/common/media/LMprec_508.emd:system/media/LMprec_508.emd \
-    vendor/cm/prebuilt/common/media/PFFprec_600.emd:system/media/PFFprec_600.emd
-
 # Copy over added mimetype supported in libcore.net.MimeUtils
 PRODUCT_COPY_FILES += \
     vendor/cm/prebuilt/common/lib/content-types.properties:system/lib/content-types.properties
@@ -129,6 +124,14 @@ PRODUCT_COPY_FILES += \
 # T-Mobile theme engine
 include vendor/cm/config/themes_common.mk
 
+# Gesture Typing 
+PRODUCT_COPY_FILES += \
+    vendor/cm/prebuilt/common/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
+
+# Messaging
+PRODUCT_COPY_FILES += \
+    vendor/cm/prebuilt/messaging/messaging.apk:system/priv-app/messaging/messaging.apk
+
 # Required CM packages
 PRODUCT_PACKAGES += \
     Development \
@@ -137,8 +140,6 @@ PRODUCT_PACKAGES += \
 
 # Optional CM packages
 PRODUCT_PACKAGES += \
-    VoicePlus \
-    Basic \
     libemoji \
     Terminal
 
@@ -208,14 +209,21 @@ PRODUCT_PACKAGES += \
     rsync
 
 # Stagefright FFMPEG plugin
-PRODUCT_PACKAGES += \
-    libffmpeg_extractor \
-    libffmpeg_omx \
-    media_codecs_ffmpeg.xml
+#PRODUCT_PACKAGES += \
+#    libffmpeg_extractor \
+#    libffmpeg_omx \
+#    media_codecs_ffmpeg.xml
 
-PRODUCT_PROPERTY_OVERRIDES += \
-    media.sf.omx-plugin=libffmpeg_omx.so \
-    media.sf.extractor-plugin=libffmpeg_extractor.so
+#PRODUCT_PROPERTY_OVERRIDES += \
+#    media.sf.omx-plugin=libffmpeg_omx.so \
+#    media.sf.extractor-plugin=libffmpeg_extractor.so
+
+# TCM (TCP Connection Management)
+PRODUCT_PACKAGES += \
+    tcmiface
+
+PRODUCT_BOOT_JARS += \
+    tcmiface
 
 # These packages are excluded from user builds
 ifneq ($(TARGET_BUILD_VARIANT),user)
