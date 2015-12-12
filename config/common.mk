@@ -121,16 +121,8 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     vendor/cm/config/permissions/com.cyanogenmod.android.xml:system/etc/permissions/com.cyanogenmod.android.xml
 
-# T-Mobile theme engine
+# Theme engine
 include vendor/cm/config/themes_common.mk
-
-# Gesture Typing 
-PRODUCT_COPY_FILES += \
-    vendor/cm/prebuilt/common/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
-
-# Messaging
-PRODUCT_COPY_FILES += \
-    vendor/cm/prebuilt/messaging/messaging.apk:system/priv-app/messaging/messaging.apk
 
 # Required CM packages
 PRODUCT_PACKAGES += \
@@ -152,11 +144,10 @@ PRODUCT_PACKAGES += \
     CMFileManager \
     Eleven \
     LockClock \
-    CMUpdater \
     CMAccount \
-    CMHome \
     CyanogenSetupWizard \
-    CMSettingsProvider
+    CMSettingsProvider \
+    ExactCalculator
 
 # CM Platform Library
 PRODUCT_PACKAGES += \
@@ -180,19 +171,26 @@ PRODUCT_PACKAGES += \
     htop \
     powertop \
     lsof \
-    mount.exfat \
-    fsck.exfat \
-    mkfs.exfat \
     mkfs.f2fs \
     fsck.f2fs \
     fibmap.f2fs \
-    ntfsfix \
-    ntfs-3g \
+    mkfs.ntfs \
+    fsck.ntfs \
+    mount.ntfs \
     gdbserver \
     micro_bench \
     oprofiled \
     sqlite3 \
     strace
+
+WITH_EXFAT ?= true
+ifeq ($(WITH_EXFAT),true)
+TARGET_USES_EXFAT := true
+PRODUCT_PACKAGES += \
+    mount.exfat \
+    fsck.exfat \
+    mkfs.exfat
+endif
 
 # Openssh
 PRODUCT_PACKAGES += \
@@ -209,21 +207,14 @@ PRODUCT_PACKAGES += \
     rsync
 
 # Stagefright FFMPEG plugin
-#PRODUCT_PACKAGES += \
-#    libffmpeg_extractor \
-#    libffmpeg_omx \
-#    media_codecs_ffmpeg.xml
-
-#PRODUCT_PROPERTY_OVERRIDES += \
-#    media.sf.omx-plugin=libffmpeg_omx.so \
-#    media.sf.extractor-plugin=libffmpeg_extractor.so
-
-# TCM (TCP Connection Management)
 PRODUCT_PACKAGES += \
-    tcmiface
+    libffmpeg_extractor \
+    libffmpeg_omx \
+    media_codecs_ffmpeg.xml
 
-PRODUCT_BOOT_JARS += \
-    tcmiface
+PRODUCT_PROPERTY_OVERRIDES += \
+    media.sf.omx-plugin=libffmpeg_omx.so \
+    media.sf.extractor-plugin=libffmpeg_extractor.so
 
 # These packages are excluded from user builds
 ifneq ($(TARGET_BUILD_VARIANT),user)
@@ -239,7 +230,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PACKAGE_OVERLAYS += vendor/cm/overlay/common
 
 PRODUCT_VERSION_MAJOR = 13
-PRODUCT_VERSION_MINOR = 0
+PRODUCT_VERSION_MINOR = 0.1
 PRODUCT_VERSION_MAINTENANCE = 0-RC0
 
 # Set CM_BUILDTYPE from the env RELEASE_TYPE, for jenkins compat
@@ -301,11 +292,7 @@ ifeq ($(CM_BUILDTYPE), RELEASE)
         endif
     endif
 else
-    ifeq ($(PRODUCT_VERSION_MINOR),0)
-        CM_VERSION := $(PRODUCT_VERSION_MAJOR)-$(shell date -u +%Y%m%d)-$(CM_BUILDTYPE)$(CM_EXTRAVERSION)-$(CM_BUILD)
-    else
-        CM_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(shell date -u +%Y%m%d)-$(CM_BUILDTYPE)$(CM_EXTRAVERSION)-$(CM_BUILD)
-    endif
+    CM_VERSION := $(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(shell date -u +%Y%m%d)-$(CM_BUILDTYPE)$(CM_EXTRAVERSION)-$(CM_BUILD)
 endif
 
 PRODUCT_PROPERTY_OVERRIDES += \
